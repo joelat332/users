@@ -25,6 +25,7 @@ CreateNewUser= async (req,res) => {
     try {
         const hashPass=await bcrypt.hash(req.body.password,10)
         const userd={username:req.body.username,id:req.body.id,password:hashPass}
+        console.log(userd.username)
         const user =await User.create(userd)
          
         res.status(200).json(user);
@@ -70,7 +71,7 @@ LoginUser= async (req,res) => {
         const chk = await bcrypt.compare(password,userdb.password)
         if (chk){
             const user ={username,id}
-            const access_Token=jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'30s'})
+            const access_Token=jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'35s'})
             const refToken =jwt.sign(user,process.env.REFRESH_TOKEN_SECRET,{expiresIn:'2m'})
             this.#refTokens.push(refToken)
             console.log(this.#refTokens)

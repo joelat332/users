@@ -1,9 +1,9 @@
 require('dotenv').config()
 const express = require('express')
 const {connectMongoDb}=require('./connection');
-const cookieParser = require('cookie-parser'); 
 const authToken= require('./middleware/Authorization')
 const userRouter = require('./routes/users.route')
+const cookieParser = require('cookie-parser'); 
 const app =express()
 
 const MONGO_URI=process.env.MONGO_URI;
@@ -15,7 +15,7 @@ app.use(express.json())
 
 
 app.use('/users',userRouter)
-app.use(authToken)
+//app.use(authToken)
 
 
 
