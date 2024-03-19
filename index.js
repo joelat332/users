@@ -15,7 +15,7 @@ app.use(express.json())
 
 
 app.use('/users',userRouter)
-//app.use(authToken)
+app.use(authToken)
 
 
 

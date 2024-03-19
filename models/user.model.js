@@ -1,3 +1,4 @@
+const { string } = require('joi');
 const mongoose= require('mongoose');
 
 const userSchema= mongoose.Schema(
@@ -15,7 +16,10 @@ const userSchema= mongoose.Schema(
        password:{
         type : String,
         required:[true]
-       }    
+       },
+       Permission:[{
+        type:String
+    }]
 },{ timestamps: true }
 )
 

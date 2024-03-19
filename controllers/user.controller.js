@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt =require("jsonwebtoken")
 
 
+
 const idSchema = Joi.object({
     id: Joi.string().length(24).hex().required(),
 });
@@ -14,18 +15,12 @@ class userController{
 
 #refTokens=[]
 
-check=async(req,res)=>{
-    console.log(this.#refTokens)
-    res.status(200)
-}
-
 //create a new user
 
 CreateNewUser= async (req,res) => {
     try {
         const hashPass=await bcrypt.hash(req.body.password,10)
         const userd={username:req.body.username,id:req.body.id,password:hashPass}
-        console.log(userd.username)
         const user =await User.create(userd)
          
         res.status(200).json(user);
@@ -37,7 +32,7 @@ CreateNewUser= async (req,res) => {
 }
 
 
-// Refersh 
+// Refresh 
 
 Refresh= async (req,res) => {
     try {
@@ -68,14 +63,20 @@ LoginUser= async (req,res) => {
         if (userdb===null){
             return res.status(400).send('User does not exist In Db')
         }  
+
         const chk = await bcrypt.compare(password,userdb.password)
+
         if (chk){
-            const user ={username,id}
-            const access_Token=jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'35s'})
-            const refToken =jwt.sign(user,process.env.REFRESH_TOKEN_SECRET,{expiresIn:'2m'})
+            const Permission = userdb.Permission
+            const user ={username,id,Permission}
+
+            const access_Token=jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'1m'})
+            const refToken =jwt.sign(user,process.env.REFRESH_TOKEN_SECRET,{expiresIn:'5m'})
+
             this.#refTokens.push(refToken)
             console.log(this.#refTokens)
             const s=JSON.stringify(this.#refTokens)
+
             res
             .cookie('jwt', s, { 
                 httpOnly: true,
@@ -84,6 +85,7 @@ LoginUser= async (req,res) => {
                 maxAge:1000*60*2
              })
             .json({access_Token:access_Token, ref_Token:refToken})
+
         } else{
             return res.status(400).send("invaild password")
         }                        
@@ -138,7 +140,6 @@ handleDeleteUser= async (req,res) =>{
         res.status(500).json({message: error.message})
     }
 }
-
 
 }
 
